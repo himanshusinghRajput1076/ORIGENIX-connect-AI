@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PersonRepository = void 0;
-const prisma_1 = require("../db/prisma");
 class PersonRepository {
     /**
      * Search investors & founders with multi-faceted filtering & pagination.
@@ -24,13 +23,13 @@ class PersonRepository {
         }
         try {
             const [investors, founders] = await Promise.all([
-                prisma_1.prisma.investor.findMany({
+                collections.investor.findMany({
                     where: whereClause,
                     take: limit,
                     skip: offset,
                     include: { company: true },
                 }),
-                prisma_1.prisma.founder.findMany({
+                collections.founder.findMany({
                     where: { ...whereClause, leadScore: { gte: minLeadScore } },
                     take: limit,
                     skip: offset,
@@ -50,13 +49,13 @@ class PersonRepository {
      */
     static async findById(id) {
         try {
-            const investor = await prisma_1.prisma.investor.findUnique({
+            const investor = await collections.investor.findUnique({
                 where: { id },
                 include: { company: true },
             });
             if (investor)
                 return investor;
-            return await prisma_1.prisma.founder.findUnique({
+            return await collections.founder.findUnique({
                 where: { id },
                 include: { company: true },
             });
@@ -71,13 +70,13 @@ class PersonRepository {
      */
     static async findByLinkedInUrl(linkedinUrl) {
         try {
-            const investor = await prisma_1.prisma.investor.findFirst({
+            const investor = await collections.investor.findFirst({
                 where: { linkedinUrl },
                 include: { company: true },
             });
             if (investor)
                 return investor;
-            return await prisma_1.prisma.founder.findFirst({
+            return await collections.founder.findFirst({
                 where: { linkedinUrl },
                 include: { company: true },
             });

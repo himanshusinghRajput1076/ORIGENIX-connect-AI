@@ -1,4 +1,4 @@
-import { prisma } from "../db/prisma";
+import { prisma } from "../db/firebase";
 import { Investor, Founder } from "@origenix/database";
 
 export interface PersonFilterOptions {
@@ -38,13 +38,13 @@ export class PersonRepository {
 
     try {
       const [investors, founders] = await Promise.all([
-        prisma.investor.findMany({
+        collections.investor.findMany({
           where: whereClause,
           take: limit,
           skip: offset,
           include: { company: true },
         }),
-        prisma.founder.findMany({
+        collections.founder.findMany({
           where: { ...whereClause, leadScore: { gte: minLeadScore } },
           take: limit,
           skip: offset,
@@ -65,13 +65,13 @@ export class PersonRepository {
    */
   static async findById(id: string): Promise<Investor | Founder | null> {
     try {
-      const investor = await prisma.investor.findUnique({
+      const investor = await collections.investor.findUnique({
         where: { id },
         include: { company: true },
       });
       if (investor) return investor;
 
-      return await prisma.founder.findUnique({
+      return await collections.founder.findUnique({
         where: { id },
         include: { company: true },
       });
@@ -86,13 +86,13 @@ export class PersonRepository {
    */
   static async findByLinkedInUrl(linkedinUrl: string): Promise<Investor | Founder | null> {
     try {
-      const investor = await prisma.investor.findFirst({
+      const investor = await collections.investor.findFirst({
         where: { linkedinUrl },
         include: { company: true },
       });
       if (investor) return investor;
 
-      return await prisma.founder.findFirst({
+      return await collections.founder.findFirst({
         where: { linkedinUrl },
         include: { company: true },
       });

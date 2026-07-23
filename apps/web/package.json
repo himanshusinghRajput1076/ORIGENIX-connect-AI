@@ -9,9 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@origenix/shared": "workspace:*",
     "@origenix/ai": "workspace:*",
-    "zod": "^3.24.1",
+    "@origenix/shared": "workspace:*",
     "@radix-ui/react-avatar": "^1.2.3",
     "@radix-ui/react-checkbox": "^1.3.8",
     "@radix-ui/react-dialog": "^1.1.20",
@@ -28,6 +27,7 @@
     "@radix-ui/react-tooltip": "^1.2.13",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "firebase": "^12.16.0",
     "framer-motion": "^12.42.2",
     "lucide-react": "^1.25.0",
     "next": "16.2.11",
@@ -35,6 +35,7 @@
     "react-dom": "19.2.4",
     "recharts": "^3.10.0",
     "tailwind-merge": "^3.6.0",
+    "zod": "^3.24.1",
     "zustand": "^5.0.14"
   },
   "devDependencies": {

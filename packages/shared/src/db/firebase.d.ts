@@ -1,0 +1,1 @@
+export { db, collections, auth } from " @origenix/database;;

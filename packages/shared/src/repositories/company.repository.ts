@@ -1,4 +1,4 @@
-import { prisma } from "../db/prisma";
+import { prisma } from "../db/firebase";
 import { Company, FundingStage } from "@origenix/database";
 
 export interface CompanyFilterOptions {
@@ -42,14 +42,14 @@ export class CompanyRepository {
 
     try {
       const [items, total] = await Promise.all([
-        prisma.company.findMany({
+        collections.company.findMany({
           where: whereClause,
           orderBy: { totalFunding: "desc" },
           take: limit,
           skip: offset,
           include: { investors: true, founders: true, startups: true },
         }),
-        prisma.company.count({ where: whereClause }),
+        collections.company.count({ where: whereClause }),
       ]);
 
       return { items, total };
@@ -64,7 +64,7 @@ export class CompanyRepository {
    */
   static async findById(id: string): Promise<Company | null> {
     try {
-      return await prisma.company.findUnique({
+      return await collections.company.findUnique({
         where: { id },
         include: { investors: true, founders: true, startups: true, posts: true, aiAnalysis: true },
       });

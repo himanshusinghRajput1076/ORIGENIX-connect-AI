@@ -1,4 +1,4 @@
-import { prisma } from "../db/prisma";
+import { prisma } from "../db/firebase";
 import { encryptSecret, decryptSecret } from "../security/encryption";
 import { LinkedInConnectInput } from "../validation";
 
@@ -14,7 +14,7 @@ export class IntegrationRepository {
     const encryptedSecret = encryptSecret(input.clientSecret);
 
     try {
-      return await prisma.linkedInIntegration.upsert({
+      return await collections.linkedInIntegration.upsert({
         where: {
           userId_targetProfileUrl: {
             userId,
@@ -49,7 +49,7 @@ export class IntegrationRepository {
    */
   static async getLinkedInConnection(userId: string, targetProfileUrl: string) {
     try {
-      const record = await prisma.linkedInIntegration.findUnique({
+      const record = await collections.linkedInIntegration.findUnique({
         where: {
           userId_targetProfileUrl: {
             userId,
@@ -75,7 +75,7 @@ export class IntegrationRepository {
    */
   static async disconnectLinkedInConnection(userId: string, targetProfileUrl: string) {
     try {
-      return await prisma.linkedInIntegration.update({
+      return await collections.linkedInIntegration.update({
         where: {
           userId_targetProfileUrl: {
             userId,

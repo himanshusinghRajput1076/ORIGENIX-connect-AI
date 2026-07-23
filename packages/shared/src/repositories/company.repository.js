@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CompanyRepository = void 0;
-const prisma_1 = require("../db/prisma");
 class CompanyRepository {
     /**
      * Search companies with filtering & pagination.
@@ -28,14 +27,14 @@ class CompanyRepository {
         }
         try {
             const [items, total] = await Promise.all([
-                prisma_1.prisma.company.findMany({
+                collections.company.findMany({
                     where: whereClause,
                     orderBy: { totalFunding: "desc" },
                     take: limit,
                     skip: offset,
                     include: { investors: true, founders: true, startups: true },
                 }),
-                prisma_1.prisma.company.count({ where: whereClause }),
+                collections.company.count({ where: whereClause }),
             ]);
             return { items, total };
         }
@@ -49,7 +48,7 @@ class CompanyRepository {
      */
     static async findById(id) {
         try {
-            return await prisma_1.prisma.company.findUnique({
+            return await collections.company.findUnique({
                 where: { id },
                 include: { investors: true, founders: true, startups: true, posts: true, aiAnalysis: true },
             });

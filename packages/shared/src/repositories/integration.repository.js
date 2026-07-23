@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.IntegrationRepository = void 0;
-const prisma_1 = require("../db/prisma");
 const encryption_1 = require("../security/encryption");
 class IntegrationRepository {
     /**
@@ -11,7 +10,7 @@ class IntegrationRepository {
         const encryptedClientId = (0, encryption_1.encryptSecret)(input.clientId);
         const encryptedSecret = (0, encryption_1.encryptSecret)(input.clientSecret);
         try {
-            return await prisma_1.prisma.linkedInIntegration.upsert({
+            return await collections.linkedInIntegration.upsert({
                 where: {
                     userId_targetProfileUrl: {
                         userId,
@@ -46,7 +45,7 @@ class IntegrationRepository {
      */
     static async getLinkedInConnection(userId, targetProfileUrl) {
         try {
-            const record = await prisma_1.prisma.linkedInIntegration.findUnique({
+            const record = await collections.linkedInIntegration.findUnique({
                 where: {
                     userId_targetProfileUrl: {
                         userId,
@@ -71,7 +70,7 @@ class IntegrationRepository {
      */
     static async disconnectLinkedInConnection(userId, targetProfileUrl) {
         try {
-            return await prisma_1.prisma.linkedInIntegration.update({
+            return await collections.linkedInIntegration.update({
                 where: {
                     userId_targetProfileUrl: {
                         userId,
