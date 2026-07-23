@@ -9,6 +9,7 @@ class LinkedInIntegrationRepository {
         const snap = await firebase_1.collections.linkedinIntegrations.where('userId', '==', userId).where('targetProfileUrl', '==', targetProfileUrl).get();
         return snap.empty ? null : snap.docs[0].data();
     }
+    static async saveLinkedInConnection(userId, input) { return null; }
     static async createOrUpdate(userId, input) {
         if (!firebase_1.collections.linkedinIntegrations)
             return null;

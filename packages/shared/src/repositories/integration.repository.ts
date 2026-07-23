@@ -8,6 +8,7 @@ export class LinkedInIntegrationRepository {
     return snap.empty ? null : snap.docs[0].data();
   }
 
+  static async saveLinkedInConnection(userId: string, input: any) { return null; }
   static async createOrUpdate(userId: string, input: LinkedInConnectInput): Promise<any> {
     if (!collections.linkedinIntegrations) return null;
     const existing = await this.findByUserAndTarget(userId, input.targetProfileUrl);
