@@ -1,91 +1,36 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.IntegrationRepository = void 0;
-const encryption_1 = require("../security/encryption");
-class IntegrationRepository {
-    /**
-     * Save or update LinkedIn Integration state with AES-256-GCM encryption.
-     */
-    static async saveLinkedInConnection(userId, input) {
-        const encryptedClientId = (0, encryption_1.encryptSecret)(input.clientId);
-        const encryptedSecret = (0, encryption_1.encryptSecret)(input.clientSecret);
-        try {
-            return await collections.linkedInIntegration.upsert({
-                where: {
-                    userId_targetProfileUrl: {
-                        userId,
-                        targetProfileUrl: input.targetProfileUrl,
-                    },
-                },
-                update: {
-                    encryptedClientId,
-                    encryptedSecret,
-                    scopes: input.scopes,
-                    status: "CONNECTED",
-                    lastSyncedAt: new Date(),
-                },
-                create: {
-                    userId,
-                    targetProfileUrl: input.targetProfileUrl,
-                    encryptedClientId,
-                    encryptedSecret,
-                    scopes: input.scopes,
-                    status: "CONNECTED",
-                    lastSyncedAt: new Date(),
-                },
-            });
-        }
-        catch (err) {
-            console.error("[IntegrationRepository.saveLinkedInConnection] Error:", err);
+exports.LinkedInIntegrationRepository = void 0;
+const firebase_1 = require("../db/firebase");
+class LinkedInIntegrationRepository {
+    static async findByUserAndTarget(userId, targetProfileUrl) {
+        if (!firebase_1.collections.linkedinIntegrations)
             return null;
+        const snap = await firebase_1.collections.linkedinIntegrations.where('userId', '==', userId).where('targetProfileUrl', '==', targetProfileUrl).get();
+        return snap.empty ? null : snap.docs[0].data();
+    }
+    static async createOrUpdate(userId, input) {
+        if (!firebase_1.collections.linkedinIntegrations)
+            return null;
+        const existing = await this.findByUserAndTarget(userId, input.targetProfileUrl);
+        if (existing) {
+            await firebase_1.collections.linkedinIntegrations.doc(existing.id).update({ ...input, updatedAt: new Date() });
+            return existing;
+        }
+        else {
+            const ref = await firebase_1.collections.linkedinIntegrations.add({ userId, ...input, createdAt: new Date() });
+            return { id: ref.id, userId, ...input };
         }
     }
-    /**
-     * Fetch active integration status for a user.
-     */
-    static async getLinkedInConnection(userId, targetProfileUrl) {
-        try {
-            const record = await collections.linkedInIntegration.findUnique({
-                where: {
-                    userId_targetProfileUrl: {
-                        userId,
-                        targetProfileUrl,
-                    },
-                },
-            });
-            if (!record)
-                return null;
-            return {
-                ...record,
-                decryptedClientId: (0, encryption_1.decryptSecret)(record.encryptedClientId),
-            };
+    static async disconnect(userId, targetProfileUrl) {
+        if (!firebase_1.collections.linkedinIntegrations)
+            return false;
+        const snap = await firebase_1.collections.linkedinIntegrations.where('userId', '==', userId).where('targetProfileUrl', '==', targetProfileUrl).get();
+        if (!snap.empty) {
+            await snap.docs[0].ref.delete();
+            return true;
         }
-        catch (err) {
-            console.error("[IntegrationRepository.getLinkedInConnection] Error:", err);
-            return null;
-        }
-    }
-    /**
-     * Disconnect LinkedIn integration.
-     */
-    static async disconnectLinkedInConnection(userId, targetProfileUrl) {
-        try {
-            return await collections.linkedInIntegration.update({
-                where: {
-                    userId_targetProfileUrl: {
-                        userId,
-                        targetProfileUrl,
-                    },
-                },
-                data: {
-                    status: "DISCONNECTED",
-                },
-            });
-        }
-        catch (err) {
-            console.error("[IntegrationRepository.disconnectLinkedInConnection] Error:", err);
-            return null;
-        }
+        return false;
     }
 }
-exports.IntegrationRepository = IntegrationRepository;
+exports.LinkedInIntegrationRepository = LinkedInIntegrationRepository;

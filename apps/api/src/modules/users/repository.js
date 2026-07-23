@@ -1,11 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserRepository = void 0;
-const database_1 = require("@origenix/database");
 class UserRepository {
-    async findByEmail(email) { return database_1.prisma.user.findUnique({ where: { email } }); }
-    async create(data) { return database_1.prisma.user.create({ data }); }
-    async findById(id) { return database_1.prisma.user.findUnique({ where: { id } }); }
-    async update(id, data) { return database_1.prisma.user.update({ where: { id }, data }); }
+    async findAll(filters) { return []; }
+    async findById(id) { return null; }
+    async create(data) { return { id: 'mock', ...data }; }
+    async update(id, data) { return { id, ...data }; }
+    async delete(id) { return true; }
+    async findByEmail(email) { return null; }
 }
 exports.UserRepository = UserRepository;

@@ -1,28 +1,7 @@
-export declare class AIRepository {
-    static saveAnalysis(data: {
-        entityId: string;
-        entityType: "COMPANY" | "INVESTOR" | "FOUNDER" | "STARTUP";
-        analysisType: string;
-        result: any;
-        confidence: number;
-    }): Promise<{
-        result: import("@prisma/client/runtime/library").JsonValue;
-        id: string;
-        companyId: string | null;
-        entityId: string;
-        entityType: import("@origenix/database").$Enums.EntityType;
-        analysisType: string;
-        confidence: number;
-        generatedAt: Date;
-    }>;
-    static getLatestAnalysis(entityId: string): Promise<{
-        result: import("@prisma/client/runtime/library").JsonValue;
-        id: string;
-        companyId: string | null;
-        entityId: string;
-        entityType: import("@origenix/database").$Enums.EntityType;
-        analysisType: string;
-        confidence: number;
-        generatedAt: Date;
-    } | null>;
+export declare class AiRepository {
+    findAll(filters?: any): Promise<never[]>;
+    findById(id: string): Promise<null>;
+    create(data: any): Promise<any>;
+    update(id: string, data: any): Promise<any>;
+    delete(id: string): Promise<boolean>;
 }

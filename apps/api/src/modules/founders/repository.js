@@ -1,9 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FounderRepository = void 0;
-const database_1 = require("@origenix/database");
 class FounderRepository {
-    async findAll(filters) { return database_1.prisma.founder.findMany({ where: filters }); }
-    async findById(id) { return database_1.prisma.founder.findUnique({ where: { id } }); }
+    async findAll(filters) { return []; }
+    async findById(id) { return null; }
+    async create(data) { return { id: 'mock', ...data }; }
+    async update(id, data) { return { id, ...data }; }
+    async delete(id) { return true; }
 }
 exports.FounderRepository = FounderRepository;

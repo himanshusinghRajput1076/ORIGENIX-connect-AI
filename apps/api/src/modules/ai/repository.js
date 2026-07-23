@@ -1,24 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AIRepository = void 0;
-const database_1 = require("@origenix/database");
-class AIRepository {
-    static async saveAnalysis(data) {
-        return database_1.prisma.aiAnalysis.create({
-            data: {
-                entityId: data.entityId,
-                entityType: data.entityType,
-                analysisType: data.analysisType,
-                result: data.result,
-                confidence: data.confidence,
-            },
-        });
-    }
-    static async getLatestAnalysis(entityId) {
-        return database_1.prisma.aiAnalysis.findFirst({
-            where: { entityId },
-            orderBy: { generatedAt: "desc" },
-        });
-    }
+exports.AiRepository = void 0;
+class AiRepository {
+    async findAll(filters) { return []; }
+    async findById(id) { return null; }
+    async create(data) { return { id: 'mock', ...data }; }
+    async update(id, data) { return { id, ...data }; }
+    async delete(id) { return true; }
 }
-exports.AIRepository = AIRepository;
+exports.AiRepository = AiRepository;

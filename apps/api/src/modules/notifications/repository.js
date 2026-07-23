@@ -1,9 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationRepository = void 0;
-const database_1 = require("@origenix/database");
 class NotificationRepository {
-    async findAll() { return database_1.prisma.notification.findMany(); }
-    async markAsRead(id) { return database_1.prisma.notification.update({ where: { id }, data: { isRead: true } }); }
+    async findAll(filters) { return []; }
+    async findById(id) { return null; }
+    async create(data) { return { id: 'mock', ...data }; }
+    async update(id, data) { return { id, ...data }; }
+    async delete(id) { return true; }
+    async markAsRead(id) { return null; }
 }
 exports.NotificationRepository = NotificationRepository;

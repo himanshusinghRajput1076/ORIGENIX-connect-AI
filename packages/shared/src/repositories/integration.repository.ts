@@ -1,94 +1,32 @@
-import { prisma } from "../db/firebase";
-import { encryptSecret, decryptSecret } from "../security/encryption";
-import { LinkedInConnectInput } from "../validation";
+import { collections } from '../db/firebase';
+import { LinkedInConnectInput } from '../validation';
 
-export class IntegrationRepository {
-  /**
-   * Save or update LinkedIn Integration state with AES-256-GCM encryption.
-   */
-  static async saveLinkedInConnection(
-    userId: string,
-    input: LinkedInConnectInput
-  ) {
-    const encryptedClientId = encryptSecret(input.clientId);
-    const encryptedSecret = encryptSecret(input.clientSecret);
+export class LinkedInIntegrationRepository {
+  static async findByUserAndTarget(userId: string, targetProfileUrl: string): Promise<any | null> {
+    if (!collections.linkedinIntegrations) return null;
+    const snap = await collections.linkedinIntegrations.where('userId', '==', userId).where('targetProfileUrl', '==', targetProfileUrl).get();
+    return snap.empty ? null : snap.docs[0].data();
+  }
 
-    try {
-      return await collections.linkedInIntegration.upsert({
-        where: {
-          userId_targetProfileUrl: {
-            userId,
-            targetProfileUrl: input.targetProfileUrl,
-          },
-        },
-        update: {
-          encryptedClientId,
-          encryptedSecret,
-          scopes: input.scopes,
-          status: "CONNECTED",
-          lastSyncedAt: new Date(),
-        },
-        create: {
-          userId,
-          targetProfileUrl: input.targetProfileUrl,
-          encryptedClientId,
-          encryptedSecret,
-          scopes: input.scopes,
-          status: "CONNECTED",
-          lastSyncedAt: new Date(),
-        },
-      });
-    } catch (err) {
-      console.error("[IntegrationRepository.saveLinkedInConnection] Error:", err);
-      return null;
+  static async createOrUpdate(userId: string, input: LinkedInConnectInput): Promise<any> {
+    if (!collections.linkedinIntegrations) return null;
+    const existing = await this.findByUserAndTarget(userId, input.targetProfileUrl);
+    if (existing) {
+      await collections.linkedinIntegrations.doc(existing.id).update({ ...input, updatedAt: new Date() });
+      return existing;
+    } else {
+      const ref = await collections.linkedinIntegrations.add({ userId, ...input, createdAt: new Date() });
+      return { id: ref.id, userId, ...input };
     }
   }
 
-  /**
-   * Fetch active integration status for a user.
-   */
-  static async getLinkedInConnection(userId: string, targetProfileUrl: string) {
-    try {
-      const record = await collections.linkedInIntegration.findUnique({
-        where: {
-          userId_targetProfileUrl: {
-            userId,
-            targetProfileUrl,
-          },
-        },
-      });
-
-      if (!record) return null;
-
-      return {
-        ...record,
-        decryptedClientId: decryptSecret(record.encryptedClientId),
-      };
-    } catch (err) {
-      console.error("[IntegrationRepository.getLinkedInConnection] Error:", err);
-      return null;
+  static async disconnect(userId: string, targetProfileUrl: string): Promise<boolean> {
+    if (!collections.linkedinIntegrations) return false;
+    const snap = await collections.linkedinIntegrations.where('userId', '==', userId).where('targetProfileUrl', '==', targetProfileUrl).get();
+    if (!snap.empty) {
+      await snap.docs[0].ref.delete();
+      return true;
     }
-  }
-
-  /**
-   * Disconnect LinkedIn integration.
-   */
-  static async disconnectLinkedInConnection(userId: string, targetProfileUrl: string) {
-    try {
-      return await collections.linkedInIntegration.update({
-        where: {
-          userId_targetProfileUrl: {
-            userId,
-            targetProfileUrl,
-          },
-        },
-        data: {
-          status: "DISCONNECTED",
-        },
-      });
-    } catch (err) {
-      console.error("[IntegrationRepository.disconnectLinkedInConnection] Error:", err);
-      return null;
-    }
+    return false;
   }
 }

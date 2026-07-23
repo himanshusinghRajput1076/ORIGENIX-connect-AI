@@ -8,6 +8,9 @@ const cors_1 = __importDefault(require("cors"));
 const helmet_1 = __importDefault(require("helmet"));
 const ai_1 = require("@origenix/ai");
 const shared_1 = require("@origenix/shared");
+const person_repository_1 = require("@origenix/shared/src/repositories/person.repository");
+const company_repository_1 = require("@origenix/shared/src/repositories/company.repository");
+const integration_repository_1 = require("@origenix/shared/src/repositories/integration.repository");
 const error_middleware_js_1 = require("./middleware/error.middleware.js");
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 4000;
@@ -30,7 +33,7 @@ app.get("/api/v1/search/people", async (req, res, next) => {
         const { query, role, industry, location, page, limit } = req.query;
         const pageNum = parseInt(page) || 1;
         const limitNum = parseInt(limit) || 20;
-        const result = await shared_1.PersonRepository.search({
+        const result = await person_repository_1.PersonRepository.search({
             query: query,
             role: role,
             industry: industry,
@@ -50,7 +53,7 @@ app.get("/api/v1/search/companies", async (req, res, next) => {
         const { query, stage, industry, location, page, limit } = req.query;
         const pageNum = parseInt(page) || 1;
         const limitNum = parseInt(limit) || 20;
-        const result = await shared_1.CompanyRepository.search({
+        const result = await company_repository_1.CompanyRepository.search({
             query: query,
             stage: stage,
             industry: industry,
@@ -91,7 +94,7 @@ app.post("/api/v1/ai/matching", async (req, res, next) => {
 app.post("/api/v1/linkedin/connect", async (req, res, next) => {
     try {
         const validated = shared_1.LinkedInConnectSchema.parse(req.body);
-        const result = await shared_1.IntegrationRepository.saveLinkedInConnection("usr_admin_1", validated);
+        const result = await integration_repository_1.LinkedInIntegrationRepository.saveLinkedInConnection("usr_admin_1", validated);
         res.json({
             success: true,
             message: "LinkedIn connection state encrypted & persisted",

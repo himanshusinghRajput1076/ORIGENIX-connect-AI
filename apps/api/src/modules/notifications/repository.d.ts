@@ -1,22 +1,8 @@
 export declare class NotificationRepository {
-    findAll(): Promise<{
-        message: string;
-        type: import("@origenix/database").$Enums.NotificationType;
-        id: string;
-        title: string;
-        createdAt: Date;
-        userId: string;
-        isRead: boolean;
-        link: string | null;
-    }[]>;
-    markAsRead(id: string): Promise<{
-        message: string;
-        type: import("@origenix/database").$Enums.NotificationType;
-        id: string;
-        title: string;
-        createdAt: Date;
-        userId: string;
-        isRead: boolean;
-        link: string | null;
-    }>;
+    findAll(filters?: any): Promise<never[]>;
+    findById(id: string): Promise<null>;
+    create(data: any): Promise<any>;
+    update(id: string, data: any): Promise<any>;
+    delete(id: string): Promise<boolean>;
+    markAsRead(id: string): Promise<null>;
 }

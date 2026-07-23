@@ -6,7 +6,7 @@ import {
   TrendDetectorEngine, 
   OutreachGenerator 
 } from "@origenix/ai";
-import { AIRepository } from "./repository";
+import { AiRepository } from "./repository";
 
 export class AIService {
   public static async analyzeEntity(payload: {
@@ -37,7 +37,7 @@ export class AIService {
     }
 
     try {
-      await AIRepository.saveAnalysis({
+      await AiRepository.saveAnalysis({
         entityId: payload.entityId,
         entityType: payload.entityType,
         analysisType: "MARKET_INTELLIGENCE",

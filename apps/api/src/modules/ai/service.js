@@ -26,7 +26,7 @@ class AIService {
             });
         }
         try {
-            await repository_1.AIRepository.saveAnalysis({
+            await repository_1.AiRepository.saveAnalysis({
                 entityId: payload.entityId,
                 entityType: payload.entityType,
                 analysisType: "MARKET_INTELLIGENCE",

@@ -1,35 +1,8 @@
 export declare class StartupRepository {
-    findAll(): Promise<{
-        id: string;
-        companyId: string;
-        createdAt: Date;
-        updatedAt: Date;
-        fundingRaised: number;
-        targetRaise: number | null;
-        currentStage: import("@origenix/database").$Enums.FundingStage;
-        pitchDeckUrl: string | null;
-        tractionMetrics: import("@prisma/client/runtime/library").JsonValue | null;
-    }[]>;
-    findById(id: string): Promise<{
-        id: string;
-        companyId: string;
-        createdAt: Date;
-        updatedAt: Date;
-        fundingRaised: number;
-        targetRaise: number | null;
-        currentStage: import("@origenix/database").$Enums.FundingStage;
-        pitchDeckUrl: string | null;
-        tractionMetrics: import("@prisma/client/runtime/library").JsonValue | null;
-    } | null>;
-    updateMetrics(id: string, data: any): Promise<{
-        id: string;
-        companyId: string;
-        createdAt: Date;
-        updatedAt: Date;
-        fundingRaised: number;
-        targetRaise: number | null;
-        currentStage: import("@origenix/database").$Enums.FundingStage;
-        pitchDeckUrl: string | null;
-        tractionMetrics: import("@prisma/client/runtime/library").JsonValue | null;
-    }>;
+    findAll(filters?: any): Promise<never[]>;
+    findById(id: string): Promise<null>;
+    create(data: any): Promise<any>;
+    updateMetrics(id: string, metrics: any): Promise<null>;
+    update(id: string, data: any): Promise<any>;
+    delete(id: string): Promise<boolean>;
 }

@@ -18,7 +18,3 @@ __exportStar(require("./security/encryption"), exports);
 __exportStar(require("./validation"), exports);
 __exportStar(require("./data/real-data-provider"), exports);
 __exportStar(require("./data/categories"), exports);
-__exportStar(require("./db/firebase"), exports);
-__exportStar(require("./repositories/person.repository"), exports);
-__exportStar(require("./repositories/company.repository"), exports);
-__exportStar(require("./repositories/integration.repository"), exports);

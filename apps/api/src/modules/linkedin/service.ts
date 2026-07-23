@@ -1,4 +1,4 @@
-import { prisma } from '@origenix/database';
+import { collections } from '@origenix/database';
 
 export class LinkedInService {
   async connectToProfile(userId: string, targetProfileUrl: string, message?: string) {

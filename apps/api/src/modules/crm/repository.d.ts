@@ -1,44 +1,11 @@
 export declare class CRMRepository {
-    findContacts(): Promise<{
-        stage: import("@origenix/database").$Enums.ContactStage;
-        name: string;
-        id: string;
-        email: string | null;
-        linkedinUrl: string | null;
-        createdAt: Date;
-        updatedAt: Date;
-        leadScore: number;
-        phone: string | null;
-        companyName: string | null;
-        notes: string | null;
-        temperature: import("@origenix/database").$Enums.LeadTemp;
-    }[]>;
-    updateStage(id: string, stage: any): Promise<{
-        stage: import("@origenix/database").$Enums.ContactStage;
-        name: string;
-        id: string;
-        email: string | null;
-        linkedinUrl: string | null;
-        createdAt: Date;
-        updatedAt: Date;
-        leadScore: number;
-        phone: string | null;
-        companyName: string | null;
-        notes: string | null;
-        temperature: import("@origenix/database").$Enums.LeadTemp;
-    }>;
-    addNote(contactId: string, content: string): Promise<{
-        id: string;
-        createdAt: Date;
-        userId: string;
-        content: string;
-        contactId: string;
-    }>;
-    getNotes(contactId: string): Promise<{
-        id: string;
-        createdAt: Date;
-        userId: string;
-        content: string;
-        contactId: string;
-    }[]>;
+    findAll(filters?: any): Promise<never[]>;
+    findById(id: string): Promise<null>;
+    create(data: any): Promise<any>;
+    update(id: string, data: any): Promise<any>;
+    delete(id: string): Promise<boolean>;
+    findContacts(): Promise<never[]>;
+    updateStage(id: string, stage: string): Promise<null>;
+    addNote(contactId: string, content: string): Promise<boolean>;
+    getNotes(contactId: string): Promise<never[]>;
 }

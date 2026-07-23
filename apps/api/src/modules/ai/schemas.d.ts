@@ -10,13 +10,13 @@ export declare const AnalyzeEntitySchema: z.ZodObject<{
     stage: string;
     location: string;
     name: string;
-    industries: string[];
     entityId: string;
-    entityType: "STARTUP" | "COMPANY" | "INVESTOR" | "FOUNDER";
+    entityType: "COMPANY" | "INVESTOR" | "FOUNDER" | "STARTUP";
+    industries: string[];
 }, {
     name: string;
     entityId: string;
-    entityType: "STARTUP" | "COMPANY" | "INVESTOR" | "FOUNDER";
+    entityType: "COMPANY" | "INVESTOR" | "FOUNDER" | "STARTUP";
     stage?: string | undefined;
     location?: string | undefined;
     industries?: string[] | undefined;
@@ -96,13 +96,13 @@ export declare const OutreachGenerateSchema: z.ZodObject<{
 }, "strip", z.ZodTypeAny, {
     outreachType: "cold_email" | "intro_request" | "partnership" | "investment_ask";
     tone: "formal" | "casual" | "concise" | "persuasive";
-    companyName: string;
     recipientName: string;
     recipientRole: string;
+    companyName: string;
     pitchSummary: string;
 }, {
-    companyName: string;
     recipientName: string;
+    companyName: string;
     pitchSummary: string;
     outreachType?: "cold_email" | "intro_request" | "partnership" | "investment_ask" | undefined;
     tone?: "formal" | "casual" | "concise" | "persuasive" | undefined;

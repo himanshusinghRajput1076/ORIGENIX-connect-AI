@@ -7,12 +7,12 @@ import {
 } from "@origenix/ai";
 import { 
   LinkedInConnectSchema, 
-  PersonRepository, 
-  CompanyRepository, 
-  IntegrationRepository, 
   fetchLiveTrendingStartups, 
   fetchLiveFundingNews 
 } from "@origenix/shared";
+import { PersonRepository } from "@origenix/shared/src/repositories/person.repository";
+import { CompanyRepository } from "@origenix/shared/src/repositories/company.repository";
+import { LinkedInIntegrationRepository } from "@origenix/shared/src/repositories/integration.repository";
 import { errorHandler } from "./middleware/error.middleware.js";
 
 const app = express();
@@ -104,7 +104,7 @@ app.post("/api/v1/ai/matching", async (req, res, next) => {
 app.post("/api/v1/linkedin/connect", async (req, res, next) => {
   try {
     const validated = LinkedInConnectSchema.parse(req.body);
-    const result = await IntegrationRepository.saveLinkedInConnection("usr_admin_1", validated);
+    const result = await LinkedInIntegrationRepository.saveLinkedInConnection("usr_admin_1", validated);
     res.json({
       success: true,
       message: "LinkedIn connection state encrypted & persisted",
