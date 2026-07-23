@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  NODE_ENV: "production"
+  API_URL: "http://api-service"
+  WEB_URL: "http://web-service"
+  ADMIN_URL: "http://admin-service"
+  DB_HOST: "postgres-db.internal"
+  DB_PORT: "5432"
+  REDIS_HOST: "redis-cache.internal"
+  REDIS_PORT: "6379"

@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: origenix-web-deployment
+  labels:
+    app: origenix-web
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: origenix-web
+  template:
+    metadata:
+      labels:
+        app: origenix-web
+    spec:
+      containers:
+      - name: web
+        image: origenix/web:latest
+        ports:
+        - containerPort: 3000
+        envFrom:
+        - configMapRef:
+            name: origenix-configmap
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: origenix-api-deployment
+  labels:
+    app: origenix-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: origenix-api
+  template:
+    metadata:
+      labels:
+        app: origenix-api
+    spec:
+      containers:
+      - name: api
+        image: origenix/api:latest
+        ports:
+        - containerPort: 4000
+        envFrom:
+        - configMapRef:
+            name: origenix-configmap
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"

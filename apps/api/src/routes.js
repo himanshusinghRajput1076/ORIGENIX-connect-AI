@@ -1,0 +1,26 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const router_1 = __importDefault(require("./modules/users/router"));
+const router_2 = __importDefault(require("./modules/companies/router"));
+const router_3 = __importDefault(require("./modules/investors/router"));
+const router_4 = __importDefault(require("./modules/founders/router"));
+const router_5 = __importDefault(require("./modules/startups/router"));
+const router_6 = __importDefault(require("./modules/search/router"));
+const router_7 = __importDefault(require("./modules/crm/router"));
+const router_8 = __importDefault(require("./modules/notifications/router"));
+const router_9 = __importDefault(require("./modules/ai/router"));
+const router = (0, express_1.Router)();
+router.use('/api/users', router_1.default);
+router.use('/api/companies', router_2.default);
+router.use('/api/investors', router_3.default);
+router.use('/api/founders', router_4.default);
+router.use('/api/startups', router_5.default);
+router.use('/api/search', router_6.default);
+router.use('/api/crm', router_7.default);
+router.use('/api/notifications', router_8.default);
+router.use('/api/ai', router_9.default);
+exports.default = router;

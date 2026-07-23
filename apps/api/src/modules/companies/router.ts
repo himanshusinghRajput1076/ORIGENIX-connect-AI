@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import { CompanyController } from './controller';
+const router: Router = Router();
+const controller = new CompanyController();
+router.get('/', controller.getCompanies);
+router.get('/:id', controller.getCompanyById);
+router.post('/', controller.createCompany);
+router.patch('/:id', controller.updateCompany);
+router.delete('/:id', controller.deleteCompany);
+export default router;

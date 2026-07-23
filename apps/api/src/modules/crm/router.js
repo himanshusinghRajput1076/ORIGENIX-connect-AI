@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const controller_1 = require("./controller");
+const router = (0, express_1.Router)();
+const controller = new controller_1.CRMController();
+router.get('/contacts', controller.getContacts);
+router.patch('/contacts/:id/stage', controller.updateContactStage);
+router.post('/contacts/:id/notes', controller.addNote);
+router.get('/contacts/:id/notes', controller.getNotes);
+exports.default = router;

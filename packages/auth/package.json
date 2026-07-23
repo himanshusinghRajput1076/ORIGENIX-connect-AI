@@ -1,0 +1,19 @@
+{
+  "name": "@origenix/auth",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "jose": "^5.2.3",
+    "express": "^4.19.2",
+    "bcrypt": "^5.1.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/bcrypt": "^5.0.2",
+    "typescript": "^5.4.5"
+  }
+}

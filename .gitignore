@@ -1,0 +1,29 @@
+# Node
+node_modules/
+.next/
+dist/
+.turbo/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# System & Logs
+.DS_Store
+*.log
+coverage/
+.nyc_output/
+
+# Data volumes
+postgres_data/
+redis_data/
+mongo_data/
+qdrant_data/

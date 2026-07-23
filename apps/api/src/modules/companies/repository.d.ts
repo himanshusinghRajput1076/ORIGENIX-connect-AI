@@ -1,0 +1,87 @@
+export declare class CompanyRepository {
+    findAll(filters: any): Promise<{
+        type: import("@origenix/database").$Enums.CompanyType;
+        stage: import("@origenix/database").$Enums.FundingStage;
+        location: string;
+        name: string;
+        id: string;
+        linkedinUrl: string | null;
+        industries: string[];
+        createdAt: Date;
+        updatedAt: Date;
+        tagline: string | null;
+        description: string | null;
+        website: string | null;
+        foundedYear: number | null;
+        teamSize: number | null;
+        totalFunding: number | null;
+    }[]>;
+    findById(id: string): Promise<{
+        type: import("@origenix/database").$Enums.CompanyType;
+        stage: import("@origenix/database").$Enums.FundingStage;
+        location: string;
+        name: string;
+        id: string;
+        linkedinUrl: string | null;
+        industries: string[];
+        createdAt: Date;
+        updatedAt: Date;
+        tagline: string | null;
+        description: string | null;
+        website: string | null;
+        foundedYear: number | null;
+        teamSize: number | null;
+        totalFunding: number | null;
+    } | null>;
+    create(data: any): Promise<{
+        type: import("@origenix/database").$Enums.CompanyType;
+        stage: import("@origenix/database").$Enums.FundingStage;
+        location: string;
+        name: string;
+        id: string;
+        linkedinUrl: string | null;
+        industries: string[];
+        createdAt: Date;
+        updatedAt: Date;
+        tagline: string | null;
+        description: string | null;
+        website: string | null;
+        foundedYear: number | null;
+        teamSize: number | null;
+        totalFunding: number | null;
+    }>;
+    update(id: string, data: any): Promise<{
+        type: import("@origenix/database").$Enums.CompanyType;
+        stage: import("@origenix/database").$Enums.FundingStage;
+        location: string;
+        name: string;
+        id: string;
+        linkedinUrl: string | null;
+        industries: string[];
+        createdAt: Date;
+        updatedAt: Date;
+        tagline: string | null;
+        description: string | null;
+        website: string | null;
+        foundedYear: number | null;
+        teamSize: number | null;
+        totalFunding: number | null;
+    }>;
+    delete(id: string): Promise<{
+        type: import("@origenix/database").$Enums.CompanyType;
+        stage: import("@origenix/database").$Enums.FundingStage;
+        location: string;
+        name: string;
+        id: string;
+        linkedinUrl: string | null;
+        industries: string[];
+        createdAt: Date;
+        updatedAt: Date;
+        tagline: string | null;
+        description: string | null;
+        website: string | null;
+        foundedYear: number | null;
+        teamSize: number | null;
+        totalFunding: number | null;
+    }>;
+}
