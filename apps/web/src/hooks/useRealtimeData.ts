@@ -69,9 +69,13 @@ export function useRealtimeDashboard() {
   return {
     metrics: {
       totalLeads: 0,
+      totalLeadsChange: 0,
       matchRate: 0,
+      matchRateChange: 0,
       outreachSent: 0,
+      outreachSentChange: 0,
       responseRate: 0,
+      responseRateChange: 0,
     },
     fundingTrends: [] as FundingTrendItem[],
     dealFlow: [] as DealFlowItem[],
