@@ -3,6 +3,22 @@ import { useState, useEffect, useCallback } from "react";
 import { useFirestoreCollection } from "./useFirestoreCollection";
 import type { Person, Company, ActivityEvent } from "@/types";
 
+export interface IndustryItem {
+  name: string;
+  value: number;
+  color: string;
+}
+
+export interface FundingTrendItem {
+  date: string;
+  amount: number;
+}
+
+export interface DealFlowItem {
+  month: string;
+  deals: number;
+}
+
 /**
  * Pure Real-Time Data Hooks for Production.
  * Connects directly to Firestore collections and live APIs without mock data.
@@ -57,9 +73,9 @@ export function useRealtimeDashboard() {
       outreachSent: 0,
       responseRate: 0,
     },
-    fundingTrends: [],
-    dealFlow: [],
-    industryDistribution: [],
+    fundingTrends: [] as FundingTrendItem[],
+    dealFlow: [] as DealFlowItem[],
+    industryDistribution: [] as IndustryItem[],
     loading: false,
     isLive: true,
   };
