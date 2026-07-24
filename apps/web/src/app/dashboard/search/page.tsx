@@ -13,7 +13,7 @@ import {
   User,
   Users,
   Mail,
-  Linkedin
+  Link as LinkIcon
 } from "lucide-react";
 import { 
   getAllSearchResults, 
@@ -309,7 +309,7 @@ export default function SearchPage() {
                               </a>
                               {(result.person as any).linkedin && (
                                 <a href={(result.person as any).linkedin} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-cyan-400 transition-colors flex items-center gap-1 text-xs" onClick={(e) => e.stopPropagation()}>
-                                  <Linkedin className="w-3.5 h-3.5" /> LinkedIn
+                                  <LinkIcon className="w-3.5 h-3.5" /> LinkedIn
                                 </a>
                               )}
                             </div>
