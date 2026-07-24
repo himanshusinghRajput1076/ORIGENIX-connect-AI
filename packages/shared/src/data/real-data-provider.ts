@@ -27,6 +27,7 @@ export interface LiveInvestorData {
   industries: string[];
   matchScore: number;
   linkedin: string;
+  email?: string;
   avatar: string;
   bio: string;
   isRealTime: boolean;
@@ -41,6 +42,7 @@ export interface LiveFounderData {
   industries: string[];
   leadScore: number;
   linkedin: string;
+  email?: string;
   avatar: string;
   bio: string;
   isRealTime: boolean;
