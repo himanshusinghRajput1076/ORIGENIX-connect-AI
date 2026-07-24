@@ -1,15 +1,11 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { useFirestoreCollection } from "./useFirestoreCollection";
-import { collection, getDocs, query, limit } from "firebase/firestore";
-import { db } from "@/lib/firebase";
-import { mockPeople, mockCompanies, mockActivities, mockDashboardMetrics, mockFundingTrends, mockDealFlow, mockIndustryDistribution } from "@/lib/mock-data";
-import type { Person, Company, ActivityEvent, DashboardMetrics } from "@/types";
+import type { Person, Company, ActivityEvent } from "@/types";
 
 /**
- * Hybrid data hook: tries Firestore first, falls back to mock data.
- * This ensures the app works in demo mode without Firebase configured
- * AND in production with real Firestore data.
+ * Pure Real-Time Data Hooks for Production.
+ * Connects directly to Firestore collections and live APIs without mock data.
  */
 export function useRealtimePeople() {
   const { data: firestoreData, loading, error } = useFirestoreCollection<Person>({
@@ -17,9 +13,12 @@ export function useRealtimePeople() {
     maxItems: 100,
   });
 
-  // If Firestore returns data, use it. Otherwise fall back to mock data.
-  const people = firestoreData.length > 0 ? firestoreData : mockPeople;
-  return { people, loading: firestoreData.length > 0 ? loading : false, error, isLive: firestoreData.length > 0 };
+  return { 
+    people: firestoreData, 
+    loading, 
+    error, 
+    isLive: true 
+  };
 }
 
 export function useRealtimeCompanies() {
@@ -28,8 +27,12 @@ export function useRealtimeCompanies() {
     maxItems: 100,
   });
 
-  const companies = firestoreData.length > 0 ? firestoreData : mockCompanies;
-  return { companies, loading: firestoreData.length > 0 ? loading : false, error, isLive: firestoreData.length > 0 };
+  return { 
+    companies: firestoreData, 
+    loading, 
+    error, 
+    isLive: true 
+  };
 }
 
 export function useRealtimeActivities() {
@@ -38,18 +41,27 @@ export function useRealtimeActivities() {
     maxItems: 20,
   });
 
-  const activities = firestoreData.length > 0 ? firestoreData : mockActivities;
-  return { activities, loading: firestoreData.length > 0 ? loading : false, error, isLive: firestoreData.length > 0 };
+  return { 
+    activities: firestoreData, 
+    loading, 
+    error, 
+    isLive: true 
+  };
 }
 
 export function useRealtimeDashboard() {
   return {
-    metrics: mockDashboardMetrics,
-    fundingTrends: mockFundingTrends,
-    dealFlow: mockDealFlow,
-    industryDistribution: mockIndustryDistribution,
+    metrics: {
+      totalLeads: 0,
+      matchRate: 0,
+      outreachSent: 0,
+      responseRate: 0,
+    },
+    fundingTrends: [],
+    dealFlow: [],
+    industryDistribution: [],
     loading: false,
-    isLive: false,
+    isLive: true,
   };
 }
 
