@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Flame, ThermometerSun, Snowflake, Search, Filter, ChevronRight, UserCircle2 } from "lucide-react";
-import { useRealtimePeople } from "@/hooks/useRealtimeData";
+import { useSavedLeads } from "@/hooks/useSavedLeads";
 import { cn, getInitials } from "@/lib/utils";
 
 const getScoreColor = (score: number) => {
@@ -20,7 +20,9 @@ const getScoreIcon = (score: number) => {
 };
 
 export default function LeadsPage() {
-  const { people } = useRealtimePeople();
+  const { getFullSavedLeadsData, loading } = useSavedLeads();
+  const people = getFullSavedLeadsData();
+  
   const sortedLeads = useMemo(() => {
     return [...people].sort((a, b) => (b.leadScore || 0) - (a.leadScore || 0));
   }, [people]);
@@ -131,7 +133,7 @@ export default function LeadsPage() {
                   <td className="px-6 py-4">
                     <Link href={`/dashboard/people/${person.id}`} className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500/20 to-cyan-500/20 border border-white/10 flex items-center justify-center text-white text-sm font-medium">
-                        {getInitials(person.name)}
+                        {getInitials(person.name || "Unknown")}
                       </div>
                       <span className="text-white font-medium group-hover:text-cyan-400 transition-colors">{person.name}</span>
                     </Link>
@@ -155,14 +157,14 @@ export default function LeadsPage() {
                   </td>
                   <td className="px-6 py-4 hidden md:table-cell">
                     <div className="flex flex-wrap gap-1">
-                      {person.industries.slice(0, 2).map((ind) => (
+                      {(person.industries || []).slice(0, 2).map((ind) => (
                         <span key={ind} className="px-2 py-0.5 rounded text-[10px] uppercase tracking-wider bg-white/5 text-slate-400 border border-white/10">
                           {ind}
                         </span>
                       ))}
-                      {person.industries.length > 2 && (
+                      {(person.industries || []).length > 2 && (
                         <span className="px-2 py-0.5 rounded text-[10px] bg-white/5 text-slate-500 border border-white/10">
-                          +{person.industries.length - 2}
+                          +{(person.industries || []).length - 2}
                         </span>
                       )}
                     </div>

@@ -33,21 +33,46 @@ export default function OutreachPage() {
 
   const selectedPerson = mockPeople.find(p => p.id === selectedPersonId);
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     setIsGenerating(true);
     setGeneratedResult(null);
     
-    // Simulate AI generation delay
-    setTimeout(() => {
-      const subject = outreachType === "Investment Ask" 
-        ? `Investment Opportunity: Aligning with ${selectedPerson?.company}'s thesis`
-        : `Connecting regarding ${selectedPerson?.company}`;
-        
-      const body = `Hi ${selectedPerson?.name.split(' ')[0]},\n\nI hope this email finds you well.\n\nI've been following your work at ${selectedPerson?.company} and was particularly impressed by your recent focus on ${selectedPerson?.industries[0] || 'innovation'}.\n\n${pitch ? `We are currently working on: ${pitch}. ` : "We are building something that I believe aligns perfectly with your current thesis. "}\n\nGiven your expertise as a ${selectedPerson?.title}, I would love to grab 15 minutes of your time next week to share what we're building and get your feedback.\n\nWould you be open to a brief introductory call?\n\nBest regards,\n[Your Name]`;
+    try {
+      const response = await fetch("/api/ai/outreach", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          recipientName: selectedPerson?.name || "Founder",
+          recipientRole: selectedPerson?.title || "Professional",
+          userPitch: pitch || "We are building an innovative platform.",
+          outreachType: outreachType.toLowerCase().replace(" ", "_"),
+          tone: tone.toLowerCase()
+        }),
+      });
+
+      const result = await response.json();
       
-      setGeneratedResult({ subject, body });
+      if (result.success && result.data) {
+        setGeneratedResult({
+          subject: result.data.subject,
+          body: result.data.body
+        });
+      } else {
+        console.error("API Error:", result);
+        setGeneratedResult({
+          subject: "Error generating outreach",
+          body: "There was a problem generating the outreach message. Please try again."
+        });
+      }
+    } catch (error) {
+      console.error("Failed to generate outreach:", error);
+      setGeneratedResult({
+        subject: "Network Error",
+        body: "Could not connect to the AI engine."
+      });
+    } finally {
       setIsGenerating(false);
-    }, 1500);
+    }
   };
 
   const handleCopy = () => {

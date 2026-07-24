@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   LayoutDashboard,
   Search,
@@ -50,6 +51,14 @@ export default function DashboardLayout({
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push("/login");
+    }
+  }, [user, loading, router]);
 
   // Close mobile sidebar when route changes
   useEffect(() => {
@@ -159,16 +168,20 @@ export default function DashboardLayout({
 
         {/* User Profile */}
         <div className="flex items-center gap-3 rounded-xl bg-white/5 p-3 ring-1 ring-white/10 transition-colors hover:bg-white/10">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-violet-600 to-indigo-600">
-            <User size={18} className="text-white" />
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-violet-600 to-indigo-600 overflow-hidden">
+            {user?.photoURL ? (
+              <img src={user.photoURL} alt="Profile" className="h-full w-full object-cover" />
+            ) : (
+              <User size={18} className="text-white" />
+            )}
           </div>
           {!isCollapsed && (
             <div className="flex flex-col overflow-hidden">
               <span className="truncate text-sm font-medium text-zinc-200">
-                Admin User
+                {user?.displayName || "Admin User"}
               </span>
               <span className="truncate text-xs text-zinc-500">
-                admin@origenix.ai
+                {user?.email || "admin@origenix.ai"}
               </span>
             </div>
           )}
@@ -176,6 +189,16 @@ export default function DashboardLayout({
       </div>
     </div>
   );
+
+  if (loading) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-[#0a0a0f]">
+        <div className="w-8 h-8 border-4 border-violet-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!user) return null; // Will redirect
 
   return (
     <div className="flex h-screen w-full bg-[#0a0a0f] text-zinc-100 overflow-hidden selection:bg-violet-500/30">

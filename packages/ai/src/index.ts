@@ -2,6 +2,7 @@
  * Origenix Connect AI Engine
  * Production AI Analysis & Matching Pipeline
  */
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export interface AnalysisResult {
   summary: string;
@@ -200,24 +201,67 @@ export class RecommendationEngine {
  * AI Outreach Draft Generator
  */
 export class OutreachGenerator {
-  public static generateOutreachDraft(params: {
+  public static async generateOutreachDraft(params: {
     recipientName: string;
     recipientRole: string;
     companyName: string;
     pitchSummary: string;
     outreachType: "cold_email" | "intro_request" | "partnership" | "investment_ask";
     tone: "formal" | "casual" | "concise" | "persuasive";
-  }): OutreachDraftResult {
-    const subject = `Investment Opportunity: ${params.companyName} — ${params.outreachType.replace(/_/g, " ").toUpperCase()}`;
-    const body = `Hi ${params.recipientName},\n\nI am reaching out regarding ${params.companyName}.\n\n${params.pitchSummary}\n\nGiven your focus as ${params.recipientRole}, I believe there is strong alignment. Would you be open for a brief 15-minute call this week?\n\nBest regards,\nHimanshu Singh\nOrigenix Connect AI`;
+  }): Promise<OutreachDraftResult> {
+    
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      console.warn("GEMINI_API_KEY is not set. Falling back to template generation.");
+      const subject = `Investment Opportunity: ${params.companyName} — ${params.outreachType.replace(/_/g, " ").toUpperCase()}`;
+      const body = `Hi ${params.recipientName},\n\nI am reaching out regarding ${params.companyName}.\n\n${params.pitchSummary}\n\nGiven your focus as ${params.recipientRole}, I believe there is strong alignment. Would you be open for a brief 15-minute call this week?\n\nBest regards,\nHimanshu Singh\nOrigenix Connect AI`;
+      
+      return {
+        subject,
+        body,
+        outreachType: params.outreachType,
+        tone: params.tone,
+        generatedAt: new Date().toISOString(),
+      };
+    }
 
-    return {
-      subject,
-      body,
-      outreachType: params.outreachType,
-      tone: params.tone,
-      generatedAt: new Date().toISOString(),
-    };
+    try {
+      const genAI = new GoogleGenerativeAI(apiKey);
+      const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+      
+      const prompt = `
+      You are an expert founder/salesperson drafting a B2B outreach email.
+      Draft a ${params.outreachType.replace("_", " ")} email.
+      Tone: ${params.tone}
+      Target Recipient: ${params.recipientName} (${params.recipientRole})
+      My Company: ${params.companyName}
+      My Pitch/Context: ${params.pitchSummary}
+      
+      Format your response as a JSON object with exactly two keys: "subject" (the email subject line) and "body" (the email body). Do not include any markdown blocks or text outside the JSON.
+      `;
+      
+      const result = await model.generateContent(prompt);
+      const responseText = result.response.text();
+      let parsedResponse: { subject: string; body: string };
+      
+      try {
+        const cleanedText = responseText.replace(/```json/g, "").replace(/```/g, "").trim();
+        parsedResponse = JSON.parse(cleanedText);
+      } catch (parseError) {
+        throw new Error("Failed to parse Gemini response as JSON");
+      }
+
+      return {
+        subject: parsedResponse.subject,
+        body: parsedResponse.body,
+        outreachType: params.outreachType,
+        tone: params.tone,
+        generatedAt: new Date().toISOString(),
+      };
+    } catch (error) {
+      console.error("Gemini API Error:", error);
+      throw error;
+    }
   }
 }
 
@@ -231,7 +275,7 @@ export function calculateMatchScore(params: {
   );
 }
 
-export function generatePersonalizedOutreach(params: {
+export async function generatePersonalizedOutreach(params: {
   recipientName: string;
   recipientRole?: string;
   userCompany?: string;
@@ -239,7 +283,7 @@ export function generatePersonalizedOutreach(params: {
   outreachType: "cold_email" | "intro_request" | "partnership" | "investment_ask";
   tone: "formal" | "casual" | "concise" | "persuasive";
 }) {
-  return OutreachGenerator.generateOutreachDraft({
+  return await OutreachGenerator.generateOutreachDraft({
     recipientName: params.recipientName,
     recipientRole: params.recipientRole || "VC Investor",
     companyName: params.userCompany || "Origenix Connect AI",

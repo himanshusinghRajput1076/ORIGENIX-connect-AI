@@ -27,7 +27,7 @@ export declare class AIService {
         pitchSummary: string;
         outreachType: "cold_email" | "intro_request" | "partnership" | "investment_ask";
         tone: "formal" | "casual" | "concise" | "persuasive";
-    }): import("@origenix/ai").OutreachDraftResult;
+    }): Promise<import("@origenix/ai").OutreachDraftResult>;
     static getSectorTrends(): {
         sector: string;
         momentumScore: number;

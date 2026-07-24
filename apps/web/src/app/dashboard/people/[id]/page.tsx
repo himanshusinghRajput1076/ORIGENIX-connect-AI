@@ -15,16 +15,21 @@ import {
   Target,
   Briefcase,
   Sparkles,
-  CalendarDays
+  CalendarDays,
+  Bookmark,
+  BookmarkCheck
 } from "lucide-react";
 import { getPersonById, getActivitiesForEntity } from "@/lib/mock-data";
 import { ROLE_LABELS, INDUSTRY_LABELS } from "@/types";
 import { cn, formatCurrency, getInitials, timeAgo } from "@/lib/utils";
+import { useSavedLeads } from "@/hooks/useSavedLeads";
 
 export default function PersonProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const person = getPersonById(id);
   const activities = getActivitiesForEntity(id);
+  const { saveLead, removeLead, isLeadSaved, loading: leadsLoading } = useSavedLeads();
+  const saved = isLeadSaved(id);
 
   if (!person) {
     return (
@@ -113,9 +118,26 @@ export default function PersonProfilePage({ params }: { params: Promise<{ id: st
 
             {/* Actions */}
             <div className="flex flex-col gap-3 w-full md:w-auto">
-              <button className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500 text-white font-medium shadow-lg shadow-violet-500/25 transition-all hover:scale-105 active:scale-95 w-full">
+              <Link 
+                href="/dashboard/outreach"
+                className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500 text-white font-medium shadow-lg shadow-violet-500/25 transition-all hover:scale-105 active:scale-95 w-full"
+              >
                 <Sparkles className="w-5 h-5" />
                 Generate Outreach
+              </Link>
+
+              <button 
+                onClick={() => saved ? removeLead(id) : saveLead(id)}
+                disabled={leadsLoading}
+                className={cn(
+                  "flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-medium transition-all hover:scale-105 active:scale-95 w-full border",
+                  saved 
+                    ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20" 
+                    : "bg-white/5 text-white border-white/10 hover:bg-white/10"
+                )}
+              >
+                {saved ? <BookmarkCheck className="w-5 h-5" /> : <Bookmark className="w-5 h-5" />}
+                {saved ? "Lead Saved" : "Save Lead"}
               </button>
               
               <div className="flex justify-center gap-3 mt-2">

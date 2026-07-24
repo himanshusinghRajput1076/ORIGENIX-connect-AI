@@ -29,3 +29,5 @@ ui-debug.log
 
 # Vercel
 .vercel/
+
+.vercel
