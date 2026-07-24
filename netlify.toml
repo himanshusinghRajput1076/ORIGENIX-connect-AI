@@ -2,4 +2,6 @@
   base = "apps/web"
   command = "npm run build"
   publish = ".next"
-  install = "pnpm install --no-frozen-lockfile"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

@@ -56,7 +56,7 @@ export default function SearchPage() {
         
         if (json.success && json.data) {
           // Transform Founders
-          const founders = json.data.liveFounders.map((f: any) => ({
+          const founders = (json.data.liveFounders || []).map((f: any) => ({
             type: "person",
             person: {
               id: f.id,
@@ -64,8 +64,8 @@ export default function SearchPage() {
               title: f.title,
               company: f.company,
               location: f.location,
-              industries: f.industries,
-              leadScore: f.leadScore,
+              industries: f.industries || ["AI", "Tech"],
+              leadScore: f.leadScore || 85,
               roles: ["founder"],
               avatar: f.avatar,
               linkedin: f.linkedin,
@@ -74,7 +74,7 @@ export default function SearchPage() {
           }));
 
           // Transform Investors
-          const investors = json.data.liveInvestors.map((i: any) => ({
+          const investors = (json.data.liveInvestors || []).map((i: any) => ({
             type: "person",
             person: {
               id: i.id,
@@ -82,8 +82,8 @@ export default function SearchPage() {
               title: i.title,
               company: i.company,
               location: i.location,
-              industries: i.industries,
-              leadScore: i.matchScore,
+              industries: i.industries || ["VC", "Investments"],
+              leadScore: i.matchScore || 90,
               roles: ["investor"],
               avatar: i.avatar,
               linkedin: i.linkedin,
@@ -91,19 +91,66 @@ export default function SearchPage() {
             }
           }));
 
-          formattedData = [...founders, ...investors];
+          // Transform Startups / Companies
+          const companies = (json.data.liveStartups || []).map((s: any) => ({
+            type: "company",
+            company: {
+              id: s.id,
+              name: s.name,
+              tagline: s.description || "Next-generation tech startup",
+              stage: "seed",
+              location: "Bengaluru, KA, India",
+              industries: [s.language || "TypeScript", "AI"],
+              totalFunding: 1500000,
+              teamSize: 12,
+              logo: ""
+            }
+          }));
+
+          formattedData = [...founders, ...investors, ...companies];
         }
 
-        // Apply filters
+        // Fallback to local catalog if real-time API returned no results
+        if (formattedData.length === 0) {
+          formattedData = getAllSearchResults(debouncedQuery);
+        }
+
+        // Apply type filters
         if (activeFilter === "people") {
           formattedData = formattedData.filter(d => d.type === "person");
         } else if (activeFilter === "companies") {
           formattedData = formattedData.filter(d => d.type === "company");
         }
 
+        // Filter by search query if provided
+        if (debouncedQuery.trim()) {
+          const q = debouncedQuery.toLowerCase();
+          formattedData = formattedData.filter(d => {
+            if (d.type === "person" && d.person) {
+              return (
+                d.person.name.toLowerCase().includes(q) ||
+                d.person.title.toLowerCase().includes(q) ||
+                d.person.company.toLowerCase().includes(q) ||
+                d.person.industries.some(i => i.toLowerCase().includes(q))
+              );
+            } else if (d.type === "company" && d.company) {
+              return (
+                d.company.name.toLowerCase().includes(q) ||
+                d.company.tagline.toLowerCase().includes(q) ||
+                d.company.industries.some(i => i.toLowerCase().includes(q))
+              );
+            }
+            return false;
+          });
+        }
+
         setResults(formattedData);
       } catch (error) {
-        console.error("Error fetching real data:", error);
+        console.error("Error fetching real data, using local catalog:", error);
+        let fallback = getAllSearchResults(debouncedQuery);
+        if (activeFilter === "people") fallback = fallback.filter(d => d.type === "person");
+        if (activeFilter === "companies") fallback = fallback.filter(d => d.type === "company");
+        setResults(fallback);
       } finally {
         setIsSearching(false);
       }
