@@ -18,10 +18,11 @@ import {
   Area
 } from "recharts";
 import { TrendingUp, DollarSign, Activity, PieChart as PieChartIcon, BarChart3, LineChart as LineChartIcon } from "lucide-react";
-import { mockFundingTrends, mockDealFlow, mockIndustryDistribution } from "@/lib/mock-data";
+import { useRealtimeDashboard } from "@/hooks/useRealtimeData";
 import { formatCurrency } from "@/lib/utils";
 
 export default function AnalyticsPage() {
+  const { fundingTrends: mockFundingTrends, dealFlow: mockDealFlow, industryDistribution: mockIndustryDistribution } = useRealtimeDashboard();
   return (
     <div className="space-y-8 pb-12">
       <div>

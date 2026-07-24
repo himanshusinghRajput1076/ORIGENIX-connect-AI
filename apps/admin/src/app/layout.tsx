@@ -8,7 +8,7 @@ export const metadata = {
   description: "Enterprise Control Panel, Billing & Health Monitoring",
 };
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className="dark">
       <body className="bg-[#0a0a0f] text-white min-h-screen font-sans antialiased">

@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Building2, MapPin, Users, DollarSign, ArrowUpRight } from "lucide-react";
-import { mockCompanies } from "@/lib/mock-data";
+import { useRealtimeCompanies } from "@/hooks/useRealtimeData";
 import { cn, formatCurrency, getInitials } from "@/lib/utils";
 
 const STAGE_COLORS: Record<string, string> = {
@@ -19,8 +19,9 @@ const TABS = ["All", "Startups", "VC Firms", "Accelerators"];
 
 export default function CompaniesPage() {
   const [activeTab, setActiveTab] = useState("All");
+  const { companies } = useRealtimeCompanies();
 
-  const filteredCompanies = mockCompanies.filter((company) => {
+  const filteredCompanies = companies.filter((company) => {
     if (activeTab === "All") return true;
     if (activeTab === "Startups") return company.type === "startup";
     if (activeTab === "VC Firms") return company.type === "vc-firm";

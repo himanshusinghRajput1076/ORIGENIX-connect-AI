@@ -3,11 +3,12 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Search, MapPin, Building2, User, ExternalLink, Mail, Sparkles } from "lucide-react";
-import { mockPeople } from "@/lib/mock-data";
+import { useRealtimePeople } from "@/hooks/useRealtimeData";
 import { INDUSTRIES_LIST, LOCATIONS_LIST } from "@origenix/shared";
 import { cn } from "@/lib/utils";
 
 export default function FoundersSearchPage() {
+  const { people: mockPeople } = useRealtimePeople();
   const [query, setQuery] = useState("");
   const [selectedIndustry, setSelectedIndustry] = useState("all");
   const [selectedLocation, setSelectedLocation] = useState("India");

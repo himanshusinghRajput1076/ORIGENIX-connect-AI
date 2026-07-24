@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Flame, ThermometerSun, Snowflake, Search, Filter, ChevronRight, UserCircle2 } from "lucide-react";
-import { mockPeople } from "@/lib/mock-data";
+import { useRealtimePeople } from "@/hooks/useRealtimeData";
 import { cn, getInitials } from "@/lib/utils";
 
 const getScoreColor = (score: number) => {
@@ -20,9 +20,10 @@ const getScoreIcon = (score: number) => {
 };
 
 export default function LeadsPage() {
+  const { people } = useRealtimePeople();
   const sortedLeads = useMemo(() => {
-    return [...mockPeople].sort((a, b) => (b.leadScore || 0) - (a.leadScore || 0));
-  }, []);
+    return [...people].sort((a, b) => (b.leadScore || 0) - (a.leadScore || 0));
+  }, [people]);
 
   const hotCount = sortedLeads.filter(p => (p.leadScore || 0) >= 80).length;
   const warmCount = sortedLeads.filter(p => (p.leadScore || 0) >= 60 && (p.leadScore || 0) < 80).length;

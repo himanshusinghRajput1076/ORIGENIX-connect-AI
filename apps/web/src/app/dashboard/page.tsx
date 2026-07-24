@@ -17,7 +17,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { cn, formatNumber, formatCurrency, timeAgo } from "@/lib/utils";
-import { mockDashboardMetrics, mockActivities, mockPeople } from "@/lib/mock-data";
+import { useRealtimeDashboard, useRealtimeActivities, useRealtimePeople } from "@/hooks/useRealtimeData";
 import { LineChart, Line, ResponsiveContainer, Tooltip } from "recharts";
 
 const containerVariants = {
@@ -34,6 +34,10 @@ const itemVariants = {
 };
 
 export default function DashboardPage() {
+  const { metrics: mockDashboardMetrics, isLive } = useRealtimeDashboard();
+  const { activities: mockActivities } = useRealtimeActivities();
+  const { people: mockPeople } = useRealtimePeople();
+
   // Extract top 4 people by leadScore
   const trendingPeople = [...mockPeople]
     .sort((a, b) => (b.leadScore ?? 0) - (a.leadScore ?? 0))
@@ -76,12 +80,20 @@ export default function DashboardPage() {
       {/* Welcome Header */}
       <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white">
-            Welcome back,{" "}
-            <span className="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
-              Alex
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl font-bold tracking-tight text-white">
+              Welcome back,{" "}
+              <span className="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
+                Alex
+              </span>
+            </h1>
+            <span className={cn(
+              "px-2 py-0.5 rounded text-xs font-semibold uppercase tracking-wider",
+              isLive ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" : "bg-amber-500/20 text-amber-400 border border-amber-500/30"
+            )}>
+              {isLive ? 'Live Data' : 'Demo Data'}
             </span>
-          </h1>
+          </div>
           <p className="mt-1 text-zinc-400">
             Here's what's happening with your outreach campaigns today.
           </p>

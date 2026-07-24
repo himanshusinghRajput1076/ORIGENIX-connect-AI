@@ -10,20 +10,22 @@ dist/
 .env.*.local
 !.env.example
 
-# Python
-__pycache__/
-*.pyc
-.venv/
-venv/
+# Build artifacts
+*.js.map
+*.d.ts.map
 
 # System & Logs
 .DS_Store
+Thumbs.db
 *.log
 coverage/
 .nyc_output/
 
-# Data volumes
-postgres_data/
-redis_data/
-mongo_data/
-qdrant_data/
+# Firebase
+firebase-debug.log
+.firebase/
+firestore-debug.log
+ui-debug.log
+
+# Vercel
+.vercel/
