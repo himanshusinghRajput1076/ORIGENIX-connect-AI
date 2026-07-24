@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { 
@@ -9,10 +9,11 @@ import {
   Building2,
   MapPin,
   TrendingUp,
-  Award
+  Mail,
+  Link as LinkIcon
 } from "lucide-react";
 import { mockPeople } from "@/lib/mock-data";
-import { ROLE_LABELS, PersonRole } from "@/types";
+import { ROLE_LABELS, PersonRole, Person } from "@/types";
 import { cn, getInitials } from "@/lib/utils";
 
 type FilterTab = "all" | "investor" | "founder" | "vc" | "angel";
@@ -20,8 +21,63 @@ type FilterTab = "all" | "investor" | "founder" | "vc" | "angel";
 export default function PeopleDirectoryPage() {
   const [activeTab, setActiveTab] = useState<FilterTab>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [people, setPeople] = useState<Person[]>(mockPeople);
+  const [loading, setLoading] = useState(false);
 
-  const filteredPeople = mockPeople.filter((person) => {
+  useEffect(() => {
+    async function fetchPeople() {
+      setLoading(true);
+      try {
+        const res = await fetch("/api/data/real-time");
+        const json = await res.json();
+        if (json.success && json.data) {
+          const founders = (json.data.liveFounders || []).map((f: any) => ({
+            id: f.id,
+            name: f.name,
+            title: f.title,
+            company: f.company,
+            location: f.location,
+            roles: ["founder" as PersonRole],
+            leadScore: f.leadScore || 90,
+            avatar: f.avatar,
+            linkedin: f.linkedin,
+            email: f.email,
+            industries: f.industries || ["AI"],
+            createdAt: new Date(),
+            updatedAt: new Date()
+          }));
+
+          const investors = (json.data.liveInvestors || []).map((i: any) => ({
+            id: i.id,
+            name: i.name,
+            title: i.title,
+            company: i.company,
+            location: i.location,
+            roles: ["investor" as PersonRole, "vc" as PersonRole],
+            leadScore: i.matchScore || 88,
+            avatar: i.avatar,
+            linkedin: i.linkedin,
+            email: i.email,
+            industries: i.industries || ["Venture Capital"],
+            createdAt: new Date(),
+            updatedAt: new Date()
+          }));
+
+          const combined = [...founders, ...investors];
+          if (combined.length > 0) {
+            setPeople(combined as any);
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching live people:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchPeople();
+  }, []);
+
+  const filteredPeople = people.filter((person) => {
     const matchesSearch = person.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           person.company.toLowerCase().includes(searchQuery.toLowerCase());
     
@@ -145,7 +201,7 @@ export default function PeopleDirectoryPage() {
                         {person.title}
                       </p>
                       
-                      <div className="space-y-2 mb-6">
+                      <div className="space-y-2 mb-4">
                         <div className="flex items-center gap-2 text-xs text-slate-400">
                           <Building2 className="w-3.5 h-3.5 shrink-0" />
                           <span className="truncate">{person.company}</span>
@@ -154,6 +210,18 @@ export default function PeopleDirectoryPage() {
                           <MapPin className="w-3.5 h-3.5 shrink-0" />
                           <span className="truncate">{person.location}</span>
                         </div>
+                        {person.email && (
+                          <div className="flex items-center gap-2 text-xs text-violet-400">
+                            <Mail className="w-3.5 h-3.5 shrink-0" />
+                            <a href={`mailto:${person.email}`} className="hover:underline truncate" onClick={e => e.stopPropagation()}>{person.email}</a>
+                          </div>
+                        )}
+                        {person.linkedin && (
+                          <div className="flex items-center gap-2 text-xs text-blue-400">
+                            <LinkIcon className="w-3.5 h-3.5 shrink-0" />
+                            <a href={person.linkedin} target="_blank" rel="noopener noreferrer" className="hover:underline truncate" onClick={e => e.stopPropagation()}>LinkedIn Profile</a>
+                          </div>
+                        )}
                       </div>
                     </div>
 

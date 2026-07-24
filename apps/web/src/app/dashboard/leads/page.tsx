@@ -19,9 +19,10 @@ const getScoreIcon = (score: number) => {
   return <Snowflake className="w-4 h-4 text-slate-400" />;
 };
 
+import { useRealtimePeople } from "@/hooks/useRealtimeData";
+
 export default function LeadsPage() {
-  const { getFullSavedLeadsData, loading } = useSavedLeads();
-  const people = getFullSavedLeadsData();
+  const { people, loading } = useRealtimePeople();
   
   const sortedLeads = useMemo(() => {
     return [...people].sort((a, b) => (b.leadScore || 0) - (a.leadScore || 0));

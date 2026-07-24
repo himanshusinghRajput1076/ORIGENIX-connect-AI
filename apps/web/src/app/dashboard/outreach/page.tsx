@@ -22,8 +22,11 @@ const TEMPLATES = [
   }
 ];
 
+import { useRealtimePeople } from "@/hooks/useRealtimeData";
+
 export default function OutreachPage() {
-  const [selectedPersonId, setSelectedPersonId] = useState(mockPeople[0].id);
+  const { people } = useRealtimePeople();
+  const [selectedPersonId, setSelectedPersonId] = useState(people[0]?.id || "");
   const [outreachType, setOutreachType] = useState(OUTREACH_TYPES[0]);
   const [tone, setTone] = useState(TONES[0]);
   const [pitch, setPitch] = useState("");
@@ -31,7 +34,7 @@ export default function OutreachPage() {
   const [generatedResult, setGeneratedResult] = useState<{subject: string, body: string} | null>(null);
   const [copied, setCopied] = useState(false);
 
-  const selectedPerson = mockPeople.find(p => p.id === selectedPersonId);
+  const selectedPerson = people.find(p => p.id === selectedPersonId) || people[0];
 
   const handleGenerate = async () => {
     setIsGenerating(true);
@@ -105,14 +108,16 @@ export default function OutreachPage() {
             <label className="text-sm font-medium text-slate-300">Target Person</label>
             <div className="relative">
               <select
-                value={selectedPersonId}
-                onChange={(e) => setSelectedPersonId(e.target.value)}
-                className="w-full appearance-none bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-violet-500/50"
-              >
-                {mockPeople.map(p => (
-                  <option key={p.id} value={p.id}>{p.name} - {p.company}</option>
-                ))}
-              </select>
+              value={selectedPersonId}
+              onChange={(e) => setSelectedPersonId(e.target.value)}
+              className="w-full bg-[#12121a] border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-violet-500/50 cursor-pointer"
+            >
+              {people.map((person) => (
+                <option key={person.id} value={person.id} className="bg-[#12121a] text-white">
+                  {person.name} ({person.title} at {person.company})
+                </option>
+              ))}
+            </select>
               <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none" />
             </div>
           </div>
