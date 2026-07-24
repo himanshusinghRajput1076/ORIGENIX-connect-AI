@@ -11,7 +11,9 @@ import {
   MapPin,
   Building2,
   User,
-  Users
+  Users,
+  Mail,
+  Linkedin
 } from "lucide-react";
 import { 
   getAllSearchResults, 
@@ -44,25 +46,70 @@ export default function SearchPage() {
   }, [query]);
 
   useEffect(() => {
-    setIsSearching(true);
-    // Simulate network delay
-    const timer = setTimeout(() => {
-      let data = getAllSearchResults(debouncedQuery);
-      if (activeFilter === "people") {
-        data = data.filter(d => d.type === "person");
-      } else if (activeFilter === "companies") {
-        data = data.filter(d => d.type === "company");
+    async function fetchRealData() {
+      setIsSearching(true);
+      try {
+        const res = await fetch(`/api/data/real-time?query=${debouncedQuery}&location=${selectedLocation}`);
+        const json = await res.json();
+        
+        let formattedData: SearchResult[] = [];
+        
+        if (json.success && json.data) {
+          // Transform Founders
+          const founders = json.data.liveFounders.map((f: any) => ({
+            type: "person",
+            person: {
+              id: f.id,
+              name: f.name,
+              title: f.title,
+              company: f.company,
+              location: f.location,
+              industries: f.industries,
+              leadScore: f.leadScore,
+              roles: ["founder"],
+              avatar: f.avatar,
+              linkedin: f.linkedin,
+              email: f.email
+            }
+          }));
+
+          // Transform Investors
+          const investors = json.data.liveInvestors.map((i: any) => ({
+            type: "person",
+            person: {
+              id: i.id,
+              name: i.name,
+              title: i.title,
+              company: i.company,
+              location: i.location,
+              industries: i.industries,
+              leadScore: i.matchScore,
+              roles: ["investor"],
+              avatar: i.avatar,
+              linkedin: i.linkedin,
+              email: i.email
+            }
+          }));
+
+          formattedData = [...founders, ...investors];
+        }
+
+        // Apply filters
+        if (activeFilter === "people") {
+          formattedData = formattedData.filter(d => d.type === "person");
+        } else if (activeFilter === "companies") {
+          formattedData = formattedData.filter(d => d.type === "company");
+        }
+
+        setResults(formattedData);
+      } catch (error) {
+        console.error("Error fetching real data:", error);
+      } finally {
+        setIsSearching(false);
       }
-      if (selectedLocation && selectedLocation !== "all") {
-        data = data.filter(d => {
-          const loc = (d.person?.location || d.company?.location || "").toLowerCase();
-          return loc.includes(selectedLocation.toLowerCase()) || selectedLocation === "India";
-        });
-      }
-      setResults(data);
-      setIsSearching(false);
-    }, 400);
-    return () => clearTimeout(timer);
+    }
+
+    fetchRealData();
   }, [debouncedQuery, activeFilter, selectedLocation]);
 
   const containerVariants = {
@@ -253,6 +300,20 @@ export default function SearchPage() {
                             <Building2 className="w-3 h-3" />
                             {result.person.company}
                           </div>
+                          
+                          {/* Real Contact Data */}
+                          {(result.person as any).email && (
+                            <div className="flex items-center gap-3 mt-2">
+                              <a href={`mailto:${(result.person as any).email}`} className="text-violet-400 hover:text-cyan-400 transition-colors flex items-center gap-1 text-xs" onClick={(e) => e.stopPropagation()}>
+                                <Mail className="w-3.5 h-3.5" /> {(result.person as any).email}
+                              </a>
+                              {(result.person as any).linkedin && (
+                                <a href={(result.person as any).linkedin} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-cyan-400 transition-colors flex items-center gap-1 text-xs" onClick={(e) => e.stopPropagation()}>
+                                  <Linkedin className="w-3.5 h-3.5" /> LinkedIn
+                                </a>
+                              )}
+                            </div>
+                          )}
                         </div>
                       </div>
                       
